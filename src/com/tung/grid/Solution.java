@@ -22,12 +22,12 @@ import java.util.Stack;
  * Solution:
  *
  * Treat the area as a matrix. Mark the barren area. Then simply traverse the matrix and count the area using depth-first-search.
- * When encounter another UNVISIT cell after the search, it means we encounter another unvisited area, reset the counter
+ * When encounter another UNVISIT cell after each search, it means we encounter another unvisited area, reset the counter
  *
  */
 public class Solution {
 
-	public enum State {BARREN, VISIT, UNVISIT};
+	private enum State {BARREN, VISIT, UNVISIT};
 
 	private State[][] matrix;
 	private int row, col;
@@ -47,17 +47,24 @@ public class Solution {
 		}
 	}
 	
-	public Solution() {
-		this(600, 400);
-	}
-
 	/**
-	 * Mark the barren area start/end at (@param lx, @param ly) and (@param rx, @param ry)
+	 * Process input string and mark the barren area accordingly
+	 * @param input
 	 */
-	public void markBarren(int lx, int ly, int rx, int ry) {
-		for(int i=ry; i<=ly; i++)
-			for(int j=lx; j<=rx; j++)
-				matrix[i][j] = State.BARREN;
+	public void markBarren(String input) {
+		String[] recs = input.split(",");
+		for(String rec : recs) {
+			rec = rec.trim();
+			String[] coord = rec.split(" ");			
+			int lx = Integer.valueOf(coord[0].trim());
+			int ly = row - 1 - Integer.valueOf(coord[1].trim());
+			int rx = Integer.valueOf(coord[2].trim());
+			int ry = row - 1 - Integer.valueOf(coord[3].trim());
+			
+			for(int i = ry; i <= ly; i++)
+				for(int j = lx; j <= rx; j++)
+					matrix[i][j] = State.BARREN;
+		}
 	}
 
 	/**
@@ -109,26 +116,25 @@ public class Solution {
 				}
 			}
 		}
-
-		//print the result
+		
+		//sort the final result
 		Collections.sort(fertiles);
-		System.out.println(fertiles);
+	}	
+	
+	public List<Integer> getFertiles() {
+		return fertiles;
 	}
 
 	public static void main(String[] args) throws Exception {
 		
-		Solution m = new Solution();
+		Solution m = new Solution(600, 400);
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		String input = reader.readLine();
-		String[] recs = input.split(",");
-		for(String rec : recs) {
-			String[] coord = rec.split(" ");
-			m.markBarren(Integer.valueOf(coord[0].trim()), m.row - 1 - Integer.valueOf(coord[1].trim()),
-					Integer.valueOf(coord[2].trim()), m.row - 1 - Integer.valueOf(coord[3].trim()));
-		}
-	    reader.close();
-
+		reader.close();
+		
+		m.markBarren(input);	    
 		m.scan();
+		System.out.println(m.fertiles);
 	}
 }
